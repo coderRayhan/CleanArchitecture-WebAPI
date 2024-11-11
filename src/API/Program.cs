@@ -2,9 +2,20 @@ using API.Extensions;
 using Infrastructure.Identity;
 using Microsoft.OpenApi.Models;
 
+const string CORS_POLICY = "Cors-Policy";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(CORS_POLICY, builder =>
+    {
+        builder.WithOrigins("http://localhost:4200/")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+    });
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -30,6 +41,7 @@ else
     app.UseHsts();
 }
 
+app.UseCors(CORS_POLICY);
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
