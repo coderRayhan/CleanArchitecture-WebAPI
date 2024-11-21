@@ -13,6 +13,7 @@ public static class WebApplicationExtensions
             .MapGroup($"/api/{groupName}")
             .WithGroupName(groupName)
             .WithTags(groupName)
+            .RequireAuthorization()
             .WithOpenApi();
     }
 

@@ -41,12 +41,12 @@ else
     app.UseHsts();
 }
 
-app.UseCors(CORS_POLICY);
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseRouting();
+app.UseCors(CORS_POLICY);
 
 app.UseAuthentication();
-//app.UseRouting();
 app.UseAuthorization();
 
 app.MapFallbackToFile("index.html");

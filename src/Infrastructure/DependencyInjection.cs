@@ -25,6 +25,10 @@ public static class DependencyInjection
     private const string DefaultConnection = nameof(DefaultConnection);
     private const string IdentityConnection = nameof(IdentityConnection);
     private const string RedisConnection = nameof(RedisConnection);
+    private const string USE_IN_MEMORY_DATABASE_KEY = "UseInMemoryDatabase";
+    private const string DATABASE_SETTINGS = "ConnectionStrings";
+    private const string MSSQL_MIGRATIONS_ASSEMBLY = "Migrators.MSSQL";
+    private const string POSTGRESQL_MIGRATIONS_ASSEMBLY = "Migrators.Postgres";
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         var dbConnectionString = configuration.GetConnectionString(DefaultConnection);
