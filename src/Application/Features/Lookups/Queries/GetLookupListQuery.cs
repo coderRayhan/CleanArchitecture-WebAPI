@@ -3,16 +3,15 @@ using Application.Common.Abstractions.Contracts;
 using Application.Common.Models;
 using Domain.Shared;
 using System.Text.Json.Serialization;
-using System.Linq.Dynamic.Core;
-using Microsoft.EntityFrameworkCore;
-using Application.Common.Extensions;
-using Domain.Entities;
+using Application.Common.Security;
+using Application.Common.Abstractions.Dapper;
 
 namespace Application.Features.Lookups.Queries;
-public sealed record GetLookupListQuery : DataGridModel, ICacheableQuery<PaginatedList<LookupResponse>>
+[Authorize(Policy = Permissions.CommonSetup.Lookups.View)]
+public record GetLookupListQuery : DataGridModel, ICacheableQuery<DapperPaginatedResponse<LookupResponse>>
 {
     [JsonIgnore]
-    public string CacheKey => $"Lookup_{PageNumber}_{PageSize}";
+    public string CacheKey => $"Lookup_{Offset}_{PageSize}";
     [JsonIgnore]
     public TimeSpan? Expiration { get; set; } = null;
 
@@ -20,20 +19,33 @@ public sealed record GetLookupListQuery : DataGridModel, ICacheableQuery<Paginat
 }
 
 internal sealed class GetLookupListQueryHandler(
-    IApplicationDbContext dbContext)
-    : IQueryHandler<GetLookupListQuery, PaginatedList<LookupResponse>>
+    IApplicationDbContext dbContext,
+    ISqlConnectionFactory sqlConnection)
+    : IQueryHandler<GetLookupListQuery, DapperPaginatedResponse<LookupResponse>>
 {
-    public async Task<Result<PaginatedList<LookupResponse>>> Handle(GetLookupListQuery request, CancellationToken cancellationToken)
+    public async Task<Result<DapperPaginatedResponse<LookupResponse>>> Handle(GetLookupListQuery request, CancellationToken cancellationToken)
     {
-        return await dbContext.Lookups
-            .OrderBy($"{request.SortField} {request.SortingDirection}")
-            .Where(e => string.IsNullOrEmpty(request.GlobalFilterText) || 
-            EF.Functions.Like(e.Name, $"%{request.GlobalFilterText}%") ||
-            EF.Functions.Like(e.NameBN, $"%{request.GlobalFilterText}%") ||
-            EF.Functions.Like(e.Name, $"%{request.GlobalFilterText}%"))
-            .ProjectQueryableToPaginatedListAsync<Lookup, LookupResponse>(
-            request.PageNumber, 
-            request.PageSize, 
-            cancellationToken);
+        var connection = sqlConnection.GetOpenConnection();
+
+        var sql = $"""
+            SELECT *
+            FROM dbo.Lookups AS l
+            LEFT JOIN dbo.Lookups AS parent ON l.ParentId = parent.Id
+            WHERE 1 = 1
+            AND CONCAT(l.Name, parent.Name) LIKE '%{request.GlobalFilterText}%'
+            """;
+
+        return await DapperPaginatedResponse<LookupResponse>
+            .CreateAsync(connection, sql, request);
+        //return await dbContext.Lookups
+        //    .OrderBy($"{request.SortField} {request.SortingDirection}")
+        //    .Where(e => string.IsNullOrEmpty(request.GlobalFilterText) || 
+        //    EF.Functions.Like(e.Name, $"%{request.GlobalFilterText}%") ||
+        //    EF.Functions.Like(e.NameBN, $"%{request.GlobalFilterText}%") ||
+        //    EF.Functions.Like(e.Name, $"%{request.GlobalFilterText}%"))
+        //    .ProjectQueryableToPaginatedListAsync<Lookup, LookupResponse>(
+        //    request.PageNumber, 
+        //    request.PageSize, 
+        //    cancellationToken);
     }
 }

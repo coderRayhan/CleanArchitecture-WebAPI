@@ -48,6 +48,7 @@ public static class DependencyInjection
     private static void AddPersistence(IServiceCollection services, string appDbConString, string identityDbConString)
     {
         services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
+        services.AddScoped<ISqlConnectionFactory>(_ => new SqlConnectionFactory(appDbConString));
 
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {

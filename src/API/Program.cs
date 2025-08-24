@@ -1,4 +1,5 @@
 using API.Extensions;
+using Application.Common.Abstractions;
 using Infrastructure.Identity;
 using Microsoft.OpenApi.Models;
 
@@ -24,6 +25,8 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddWebServices();
 
 var app = builder.Build();
+
+ServiceLocator.ServiceProvider = app.Services;
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
