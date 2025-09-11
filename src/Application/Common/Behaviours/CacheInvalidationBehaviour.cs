@@ -14,11 +14,15 @@ internal sealed class CacheInvalidationBehaviour<TRequest, TResponse>(
     {
         var result = await next().ConfigureAwait(false);
 
-        if (!string.IsNullOrEmpty(request.CacheKey))
+        if (request.CacheKeys is not null && request.CacheKeys?.Length > 0)
         {
-            await cacheService.RemoveByPrefixAsync(request.CacheKey, CancellationToken.None);
+            var tasks = request.CacheKeys.Select(async cacheKey =>
+            {
+                await cacheService.RemoveByPrefixAsync(cacheKey, cancellationToken);
+                logger.LogInformation("Cache value of {CacheKey} expired with {@Request}", cacheKey, request);
+            });
 
-            logger.LogInformation("Cache value of {CacheKey} expired with {@Request}", request.CacheKey, request);
+            await Task.WhenAll(tasks);
         }
 
         return result;

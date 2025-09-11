@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
-namespace API.Infrastructure;
+namespace API.Middlewares;
 
 public class GlobalExceptionHandler(
     ILogger<GlobalExceptionHandler> logger)

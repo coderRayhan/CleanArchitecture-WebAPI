@@ -11,7 +11,7 @@ namespace Application.Features.Lookups.Queries;
 public record GetLookupListQuery : DataGridModel, ICacheableQuery<DapperPaginatedResponse<LookupResponse>>
 {
     [JsonIgnore]
-    public string CacheKey => $"Lookup_{Offset}_{PageSize}";
+    public string CacheKey => $"Lookup_{PageNumber}_{PageSize}";
     [JsonIgnore]
     public TimeSpan? Expiration { get; set; } = null;
 
@@ -19,7 +19,6 @@ public record GetLookupListQuery : DataGridModel, ICacheableQuery<DapperPaginate
 }
 
 internal sealed class GetLookupListQueryHandler(
-    IApplicationDbContext dbContext,
     ISqlConnectionFactory sqlConnection)
     : IQueryHandler<GetLookupListQuery, DapperPaginatedResponse<LookupResponse>>
 {
@@ -32,20 +31,10 @@ internal sealed class GetLookupListQueryHandler(
             FROM dbo.Lookups AS l
             LEFT JOIN dbo.Lookups AS parent ON l.ParentId = parent.Id
             WHERE 1 = 1
-            AND CONCAT(l.Name, parent.Name) LIKE '%{request.GlobalFilterText}%'
+            --AND CONCAT(l.Name, parent.Name) LIKE '%{request.GlobalFilterText}%'
             """;
 
         return await DapperPaginatedResponse<LookupResponse>
             .CreateAsync(connection, sql, request);
-        //return await dbContext.Lookups
-        //    .OrderBy($"{request.SortField} {request.SortingDirection}")
-        //    .Where(e => string.IsNullOrEmpty(request.GlobalFilterText) || 
-        //    EF.Functions.Like(e.Name, $"%{request.GlobalFilterText}%") ||
-        //    EF.Functions.Like(e.NameBN, $"%{request.GlobalFilterText}%") ||
-        //    EF.Functions.Like(e.Name, $"%{request.GlobalFilterText}%"))
-        //    .ProjectQueryableToPaginatedListAsync<Lookup, LookupResponse>(
-        //    request.PageNumber, 
-        //    request.PageSize, 
-        //    cancellationToken);
     }
 }

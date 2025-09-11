@@ -24,9 +24,12 @@ public static class DependencyInjection
 
             //cfg.AddOpenBehavior(typeof(MemoryCachingBehaviour<,>));
 
-            cfg.AddOpenBehavior(typeof(QueryCachingBehaviour<,>));
+            //cfg.AddOpenBehavior(typeof(QueryCachingBehaviour<,>));
 
-            cfg.AddOpenBehavior(typeof(CacheInvalidationBehaviour<,>));
+            //cfg.AddOpenBehavior(typeof(CacheInvalidationBehaviour<,>));
+
+            cfg.AddOpenBehavior(typeof(LazyCachingBehaviour<,>));
+            cfg.AddOpenBehavior(typeof(LazyCacheInvalidationBehavior<,>));
 
         });
 

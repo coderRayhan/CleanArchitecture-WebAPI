@@ -1,5 +1,6 @@
 ﻿using Application.Common.Models;
 using Dapper;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Data;
@@ -43,14 +44,24 @@ namespace Application.Common.Abstractions.Dapper
         {
             var logger = ServiceLocator.ServiceProvider.GetRequiredService<ILogger<DapperPaginatedResponse<TEntity>>>();
 
+            var offset = GetOffset(gridModel.PageSize, gridModel.PageNumber);
+
+            string orderBy = string.Empty;
+            if (!HasOrderByClause(sql))
+            {
+                string orderBySql = GetOrderBySql(gridModel);
+                orderBy = string.IsNullOrEmpty(orderBySql) ? "ORDER BY (SELECT NULL)" : orderBySql;
+            }
+
             var paginatedSql = $"""
                 {sql}
-                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+                {orderBy}
+                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
                 """;
 
             #region Parameters
             var param = new DynamicParameters(parameters);
-            param.Add(nameof(gridModel.Offset), gridModel.Offset);
+            param.Add("Offset", offset);
             param.Add(nameof(gridModel.PageSize), gridModel.PageSize);
             #endregion
 
@@ -68,5 +79,31 @@ namespace Application.Common.Abstractions.Dapper
                 gridModel.PageSize);
         }
 
+        private static int GetOffset(int pageSize, int pageNumber)
+        {
+            return (pageNumber - 1) * pageSize;
+        }
+
+        #region Sorting Functions (ORDER BY)
+
+        private static string GetOrderBySql(DataGridModel gridModel)
+        {
+            if (string.IsNullOrEmpty(gridModel.SortField) || gridModel.SortField is null)
+            {
+                return string.Empty;
+            }
+
+            return gridModel.SortingDirection == -1
+                ? $"ORDER BY {gridModel.SortField} DESC"
+                : $"ORDER BY {gridModel.SortField} ASC";
+        }
+
+        private static bool HasOrderByClause(string sql)
+        {
+            return sql.Contains($"ORDER BY", StringComparison.OrdinalIgnoreCase);
+        }
+
+
+        #endregion
     }
 }

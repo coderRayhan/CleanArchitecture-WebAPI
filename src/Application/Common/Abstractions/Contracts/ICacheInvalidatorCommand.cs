@@ -5,12 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Common.Abstractions.Contracts;
-public interface ICacheInvalidatorCommand : ICommand
+public interface ICacheInvalidatorCommand : ICommand, IBaseCacheInvalidatorCommand
 {
-    string CacheKey { get; }
 }
 
-public interface ICacheInvalidatorCommand<TResponse> : ICommand<TResponse>
+public interface ICacheInvalidatorCommand<TResponse> : ICommand<TResponse>, IBaseCacheInvalidatorCommand
 {
-    string CacheKey { get; }
+}
+
+public interface IBaseCacheInvalidatorCommand
+{
+    string[] CacheKeys { get; }
 }

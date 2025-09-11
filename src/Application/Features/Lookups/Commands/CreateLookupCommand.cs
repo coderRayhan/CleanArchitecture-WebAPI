@@ -5,6 +5,7 @@ using Domain.Entities;
 using Domain.Shared;
 using Mapster;
 using System.Text.Json.Serialization;
+using Application.Common.Abstractions.Caching;
 
 namespace Application.Features.Lookups.Commands;
 public sealed record CreateLookupCommand(
@@ -17,7 +18,7 @@ public sealed record CreateLookupCommand(
     : ICacheInvalidatorCommand<Guid>
 {
     [JsonIgnore]
-    public string CacheKey => CacheKeys.Lookups;
+    public string[] CacheKeys => [AppCacheKeys.Lookups];
 }
 
 internal sealed class CreateLookupCommandHandler(

@@ -18,7 +18,7 @@ namespace Application.Features.Lookups.Commands
         Guid? ParentId = null)
         : ICacheInvalidatorCommand
     {
-        public string CacheKey => throw new NotImplementedException();
+        public string[] CacheKeys => [AppCacheKeys.Lookups];
     }
 
     internal sealed class UpdateLookupCommandHandler(
@@ -44,7 +44,7 @@ namespace Application.Features.Lookups.Commands
             await dbContext.SaveChangesAsync(cancellationToken);
 
             if (previousStatus != request.Status)
-                await publisher.Publish(new CacheInvalidationEvent() { CacheKey = CacheKeys.LookupDetails });
+                await publisher.Publish(new CacheInvalidationEvent() { CacheKey = AppCacheKeys.LookupDetails });
 
             return Result.Success();
         }

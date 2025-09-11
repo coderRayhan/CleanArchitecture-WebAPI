@@ -10,7 +10,7 @@ namespace Application.Features.Lookups.Commands;
 public sealed record DeleteLookupCommand(Guid Id)
     : ICacheInvalidatorCommand
 {
-    public string CacheKey => CacheKeys.Lookups;
+    public string[] CacheKeys => [AppCacheKeys.Lookups];
 }
 
 internal sealed class DeleteLookupCommandHandler(
@@ -29,7 +29,7 @@ internal sealed class DeleteLookupCommandHandler(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        await publisher.Publish(new CacheInvalidationEvent() { CacheKey = CacheKeys.LookupDetails });
+        await publisher.Publish(new CacheInvalidationEvent() { CacheKey = AppCacheKeys.LookupDetails });
         
         return Result.Success();
     }

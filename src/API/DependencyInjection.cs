@@ -1,4 +1,4 @@
-﻿using API.Infrastructure;
+﻿using API.Middlewares;
 using API.Services;
 using Application.Common.Abstractions.Identity;
 using Microsoft.AspNetCore.Mvc;
