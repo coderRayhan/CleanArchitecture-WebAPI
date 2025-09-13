@@ -7,7 +7,7 @@ using API.Extensions;
 using Application.Features.Lookups.Commands;
 using Domain.Shared;
 
-namespace API.Endpoints;
+namespace API.Endpoints.Setups;
 
 public sealed class Lookups : EndpointGroupBase
 {

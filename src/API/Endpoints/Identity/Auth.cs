@@ -4,12 +4,11 @@ using Application.Features.Identity.Commands;
 using Application.Features.Identity.Models;
 using Domain.Shared;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Endpoints;
+namespace API.Endpoints.Identity;
 
-public class Accounts : EndpointGroupBase
+public class Auth : EndpointGroupBase
 {
     private static readonly string RefreshTokenKey = "X-Refresh-Token";
     private static readonly string Authorization = nameof(Authorization);
