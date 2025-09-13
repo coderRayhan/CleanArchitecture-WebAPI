@@ -11,7 +11,7 @@ namespace Application.Features.Lookups.Queries;
 public record GetLookupListQuery : DataGridModel, ICacheableQuery<DapperPaginatedResponse<LookupResponse>>
 {
     [JsonIgnore]
-    public string CacheKey => $"Lookup_{PageNumber}_{PageSize}";
+    public string CacheKey => $"Lookups_{PageNumber}_{PageSize}";
     [JsonIgnore]
     public TimeSpan? Expiration { get; set; } = null;
 

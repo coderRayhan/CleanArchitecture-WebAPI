@@ -21,7 +21,7 @@ internal sealed class LazyCacheInvalidationBehavior<TRequest, TResponse>(
         {
             var tasks = request.CacheKeys.Select(async cacheKey =>
             {
-                await cacheService.RemobeByPrefixAsync(cacheKey, cancellationToken);
+                await cacheService.RemoveByPrefixAsync(cacheKey, cancellationToken);
                 logger.LogInformation("Cache invalidated for key pattern: {CacheKey} by {RequestName}",
                     cacheKey, typeof(TRequest).Name);
             });

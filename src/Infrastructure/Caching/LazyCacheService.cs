@@ -1,7 +1,9 @@
 ﻿using Application.Common.Abstractions.Caching;
 using LazyCache;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Collections.Concurrent;
 
 namespace Infrastructure.Caching;
 internal sealed class LazyCacheService(
@@ -10,38 +12,86 @@ internal sealed class LazyCacheService(
     ILogger<LazyCacheService> logger)
     : ILazyCacheService
 {
+    private readonly CacheOptions _cacheOptions = cacheOptions.Value;
+    private static readonly ConcurrentDictionary<string, bool> CacheKeys = new();
     public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default)
     {
         return await cache.GetAsync<T>(key);
     }
 
-    public Task<T?> GetOrSetAsync<T>(string key, Func<Task<T>> factory, TimeSpan? slidingExpiration = null, CancellationToken cancellationToken = default)
+    public async Task<T?> GetOrSetAsync<T>(string key, Func<Task<T>> factory, TimeSpan? slidingExpiration = null, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await cache.GetOrAddAsync(
+            key,
+            async () =>
+            {
+                var result = await factory();
+                CacheKeys.TryAdd(key, false);
+                return result;
+            },
+            GetMemoryCacheOptions(slidingExpiration));
     }
 
-    public Task<string?> GetStringAsync(string key, CancellationToken cancellationToken = default)
+    public async Task<string?> GetStringAsync(string key, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await cache.GetAsync<string>(key);
     }
 
-    public Task RemobeByPrefixAsync(string prefixKey, CancellationToken cancellationToken = default)
+    public async Task RemoveByPrefixAsync(string prefixKey, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(prefixKey)) return;
+        var keys = CacheKeys.Keys
+            .Where(k => k.Equals(prefixKey, StringComparison.OrdinalIgnoreCase) ||
+            k.StartsWith($"{prefixKey}", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        foreach (var key in keys) 
+        { 
+            cache.Remove(key);
+            CacheKeys.TryRemove(key, out _);
+            logger.LogTrace("Cache removed for key: {Key} with prefix: {Prefix}", key, prefixKey);
+        }
     }
 
-    public Task RemoveAsync(string key, CancellationToken cancellationToken = default)
+    public async Task RemoveAsync(string key, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        cache.Remove(key);
+        CacheKeys.TryRemove(key, out _);
+        logger.LogTrace("Cache removed for key: {Key}", key);
     }
 
-    public Task SetAsync<T>(string key, T value, TimeSpan? slidingExpiration = null, CancellationToken cancellationToken = default)
+    public async Task SetAsync<T>(string key, T value, TimeSpan? slidingExpiration = null, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await cache.GetOrAddAsync(key,
+            () => Task.FromResult(value),
+            GetMemoryCacheOptions(slidingExpiration));
+
+        CacheKeys.TryAdd(key, false);
+        logger.LogTrace("Cache removed for key: {Key}", key);
     }
 
-    public Task SetStringAsync(string key, string value, TimeSpan? slidingExpiration = null, CancellationToken cancellationToken = default)
+    public async Task SetStringAsync(string key, string value, TimeSpan? slidingExpiration = null, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await cache.GetOrAddAsync(
+            key,
+            () => Task.FromResult(value),
+            GetMemoryCacheOptions(slidingExpiration));
+        CacheKeys.TryAdd(key, false);
+        logger.LogTrace("Cache string set for key: {Key}", key);
+    }
+
+    private MemoryCacheEntryOptions GetMemoryCacheOptions(TimeSpan? slidingExpiration)
+    {
+        var options = new MemoryCacheEntryOptions();
+        if (slidingExpiration.HasValue)
+        {
+            options.SetSlidingExpiration(slidingExpiration.Value);
+        }
+        else
+        {
+            options.SetSlidingExpiration(TimeSpan.FromMinutes(_cacheOptions.SlidingExpiration))
+                .SetAbsoluteExpiration(TimeSpan.FromMinutes(_cacheOptions.AbsoluteExpiration));
+        }
+        return options;
     }
 }
