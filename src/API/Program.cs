@@ -1,7 +1,6 @@
 using API.Extensions;
 using Application.Common.Abstractions;
 using Infrastructure.Identity;
-using Microsoft.OpenApi.Models;
 
 const string CORS_POLICY = "Cors-Policy";
 var builder = WebApplication.CreateBuilder(args);
