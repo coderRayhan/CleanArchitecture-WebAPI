@@ -1,6 +1,7 @@
 using API.Extensions;
 using Application.Common.Abstractions;
 using Infrastructure.Identity;
+using Scalar.AspNetCore;
 
 const string CORS_POLICY = "Cors-Policy";
 var builder = WebApplication.CreateBuilder(args);
@@ -32,10 +33,26 @@ if (app.Environment.IsDevelopment())
 {
     await app.IdentityInitialiseDatabaseAsync();
 
-    app.UseSwaggerUi(options =>
+    // app.UseSwaggerUi(options =>
+    // {
+    //     options.Path = "/api";
+    //     options.DocumentPath = "/api/specification.json";
+    // });
+    
+    // NSwag generates the OpenAPI document
+    app.UseOpenApi(options =>
     {
-        options.Path = "/api";
-        options.DocumentPath = "/api/specification.json";
+        options.Path = "/openapi/{documentName}.json";
+    });
+
+    // Scalar UI
+    app.MapScalarApiReference(options =>
+    {
+        options
+            .WithTitle("API Documentation")
+            .WithTheme(ScalarTheme.Default)
+            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient)
+            .WithOpenApiRoutePattern("/openapi/{documentName}.json");;
     });
 }
 else 
@@ -55,7 +72,7 @@ app.MapFallbackToFile("index.html");
 app.UseExceptionHandler(options => { });
 
 //need to check
-app.Map("/", () => Results.Redirect("/api"));
+app.Map("/", () => Results.Redirect("/scalar"));
 
 app.MapEndpoints();
 

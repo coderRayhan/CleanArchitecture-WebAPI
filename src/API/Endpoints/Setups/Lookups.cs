@@ -17,29 +17,34 @@ public sealed class Lookups : EndpointGroupBase
 
         group.MapPost("GetAll", GetAll)
             .WithName("GetLookups")
-            .Produces<PaginatedList<LookupResponse>>(StatusCodes.Status200OK);
+            .Produces<PaginatedList<LookupResponse>>(StatusCodes.Status200OK)
+            .RequireAuthorization();
 
         group.MapGet("Get/{id:Guid}", Get)
             .WithName("GetLookup")
             .Produces<LookupResponse>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest);
+            .Produces(StatusCodes.Status400BadRequest)
+            .RequireAuthorization();
 
         group.MapPost("Create", Create)
             .WithName("CreateLookup")
             .Produces<Guid>(StatusCodes.Status201Created)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest);
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .RequireAuthorization();
 
         group.MapPut("Update", Update)
             .WithName("UpdateLookup")
             .Produces(StatusCodes.Status200OK)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound);
+            .Produces(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
 
         group.MapDelete("Delete", Delete)
             .WithName("DeleteLookup")
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest);
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .RequireAuthorization();
     }
 
     private async Task<IResult> GetAll(
