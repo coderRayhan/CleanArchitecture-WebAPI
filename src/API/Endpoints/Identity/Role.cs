@@ -18,6 +18,13 @@ public class Role : EndpointGroupBase
             .Produces<string>(StatusCodes.Status201Created)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .RequireAuthorization();
+        
+        group.MapPut("Update", Create)
+            .WithName("UpdateRole")
+            .Produces(StatusCodes.Status200OK)
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
     }
 
     private async Task<IResult> Create(
@@ -28,6 +35,17 @@ public class Role : EndpointGroupBase
 
         return result.Match(
             onSuccess: () => Results.CreatedAtRoute("CreateRole", new{id = result.Value}),
+            onFailure: result.ToProblemDetails);
+    }
+    
+    private async Task<IResult> Update(
+        ISender sender,
+        UpdateRoleCommand command)
+    {
+        var result = await sender.Send(command);
+
+        return result.Match(
+            onSuccess: () => Results.Ok(),
             onFailure: result.ToProblemDetails);
     }
 }
