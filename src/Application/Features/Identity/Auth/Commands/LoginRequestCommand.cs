@@ -3,7 +3,7 @@ using Application.Common.Abstractions.Identity;
 using Application.Features.Identity.Models;
 using Domain.Shared;
 
-namespace Application.Features.Identity.Commands;
+namespace Application.Features.Identity.Auth.Commands;
 public sealed record LoginRequestCommand(
     string UserName,
     string Password,

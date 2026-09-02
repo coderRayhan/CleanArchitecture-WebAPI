@@ -4,7 +4,7 @@ using Application.Common.Abstractions.Contracts;
 using Application.Common.Abstractions.Identity;
 using Domain.Shared;
 
-namespace Application.Features.Identity.Commands;
+namespace Application.Features.Identity.Roles.Commands;
 
 public sealed record CreateRoleCommand(
     string RoleName) : ICacheInvalidatorCommand<string>

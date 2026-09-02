@@ -10,11 +10,12 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Security.Cryptography;
+using Infrastructure.Identity.Permissions;
 
 namespace Infrastructure.Identity.Services;
 internal sealed class TokenProviderService(
     IOptionsSnapshot<JwtOptions> jwtOptions,
-    UserManager<ApplicationUser> userManager) : ITokenProviderService
+    UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager) : ITokenProviderService
 {
     private readonly JwtOptions _jwtOptions = jwtOptions.Value;
     public async Task<(string AccessToken, int ExpiresInMinutes)> GenerateAccessTokenAsync(string userId)
@@ -23,17 +24,28 @@ internal sealed class TokenProviderService(
 
         var roles = await userManager.GetRolesAsync(user!);
 
-        var userRoles = roles.Select(r => new Claim(ClaimTypes.Role, r)).ToArray();
-
-        var claims = new[]
+        var claims = new List<Claim>()
         {
             new Claim(JwtRegisteredClaimNames.Sub, user!.Id),
             new Claim(JwtRegisteredClaimNames.Email, user.Email!),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim("username", user.UserName!),
             new Claim("ip", GetIpAddress())
-        }
-        .Union(userRoles);
+        };
+        
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+        var roleClaimTasks = roles.Select(async roleName =>
+        {
+            var role = await roleManager.FindByNameAsync(roleName);
+            if (role is null) return Enumerable.Empty<Claim>();
+
+            var roleClaims = await roleManager.GetClaimsAsync(role);
+            return roleClaims.Where(c => c.Type == CustomClaimTypes.Permission);
+        });
+        
+        var roleClaimResults = await Task.WhenAll(roleClaimTasks);
+        claims.AddRange(roleClaimResults.SelectMany(c => c));
 
         var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
 

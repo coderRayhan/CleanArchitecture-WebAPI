@@ -1,14 +1,14 @@
 ﻿using Application.Common.Models;
 using Dapper;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Data;
 using System.Text.Json.Serialization;
+using Application.Common.Abstractions;
 
-namespace Application.Common.Abstractions.Dapper
+namespace Application.Common.DapperQueries
 {
-    public class DapperPaginatedResponse<TEntity>
+    public class PaginatedResponse<TEntity>
         where TEntity : class
     {
         [JsonInclude]
@@ -19,12 +19,12 @@ namespace Application.Common.Abstractions.Dapper
         public bool HasPreviousPage => PageNumber > 1;
         public bool HasNextPage => PageNumber < TotalPages;
 
-        public DapperPaginatedResponse()
+        public PaginatedResponse()
         {
             
         }
 
-        public DapperPaginatedResponse(
+        public PaginatedResponse(
             IReadOnlyCollection<TEntity> items,
             int count,
             int pageNumber,
@@ -36,13 +36,13 @@ namespace Application.Common.Abstractions.Dapper
             Items = items;
         }
 
-        public static async Task<DapperPaginatedResponse<TEntity>> CreateAsync(
+        public static async Task<PaginatedResponse<TEntity>> CreateAsync(
             IDbConnection dbConnection,
             string sql,
             DataGridModel gridModel,
             object? parameters = default)
         {
-            var logger = ServiceLocator.ServiceProvider.GetRequiredService<ILogger<DapperPaginatedResponse<TEntity>>>();
+            var logger = ServiceLocator.ServiceProvider.GetRequiredService<ILogger<PaginatedResponse<TEntity>>>();
 
             var offset = GetOffset(gridModel.PageSize, gridModel.PageNumber);
 
@@ -72,7 +72,7 @@ namespace Application.Common.Abstractions.Dapper
 
             var count = items.Count();
 
-            return new DapperPaginatedResponse<TEntity>(
+            return new PaginatedResponse<TEntity>(
                 items.AsList(),
                 count,
                 gridModel.PageNumber,
@@ -93,7 +93,7 @@ namespace Application.Common.Abstractions.Dapper
                 return string.Empty;
             }
 
-            return gridModel.SortingDirection == -1
+            return gridModel.SortOrder == -1
                 ? $"ORDER BY {gridModel.SortField} DESC"
                 : $"ORDER BY {gridModel.SortField} ASC";
         }

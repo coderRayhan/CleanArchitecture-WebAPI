@@ -1,10 +1,10 @@
 ﻿using API.Extensions;
 using API.Infrastructure;
-using Application.Features.Identity.Commands;
+using Application.Features.Identity.Auth.Commands;
 using Application.Features.Identity.Models;
 using Domain.Shared;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
+using ProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
 namespace API.Endpoints.Identity;
 

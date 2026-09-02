@@ -1,6 +1,9 @@
-﻿namespace Application.Common.Abstractions.Contracts;
+﻿using System.Text.Json.Serialization;
+
+namespace Application.Common.Abstractions.Contracts;
 public interface ICacheableQuery
 {
+    [JsonIgnore]
     string CacheKey { get; }
     TimeSpan? Expiration { get; }
     bool? AllowCache { get; }

@@ -2,7 +2,7 @@
 using Application.Common.Abstractions.Identity;
 using Domain.Shared;
 
-namespace Application.Features.Identity.Commands;
+namespace Application.Features.Identity.Auth.Commands;
 public sealed record LogoutRequestCommand(
     string accessToken)
     : ICommand;

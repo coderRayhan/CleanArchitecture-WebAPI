@@ -4,6 +4,7 @@ using Application.Features.Lookups.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using API.Extensions;
+using Application.Common.Security;
 using Application.Features.Lookups.Commands;
 using Domain.Shared;
 
@@ -18,33 +19,33 @@ public sealed class Lookups : EndpointGroupBase
         group.MapPost("GetAll", GetAll)
             .WithName("GetLookups")
             .Produces<PaginatedList<LookupResponse>>(StatusCodes.Status200OK)
-            .RequireAuthorization();
+            .RequireAuthorization(Permissions.CommonSetup.Lookups.View);
 
         group.MapGet("Get/{id:Guid}", Get)
             .WithName("GetLookup")
             .Produces<LookupResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-            .RequireAuthorization();
+            .RequireAuthorization(Permissions.CommonSetup.Lookups.View);
 
         group.MapPost("Create", Create)
             .WithName("CreateLookup")
             .Produces<Guid>(StatusCodes.Status201Created)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .RequireAuthorization();
+            .RequireAuthorization(Permissions.CommonSetup.Lookups.Create);
 
         group.MapPut("Update", Update)
             .WithName("UpdateLookup")
             .Produces(StatusCodes.Status200OK)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound)
-            .RequireAuthorization();
+            .RequireAuthorization(Permissions.CommonSetup.Lookups.Edit);
 
         group.MapDelete("Delete", Delete)
             .WithName("DeleteLookup")
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .RequireAuthorization();
+            .RequireAuthorization(Permissions.CommonSetup.Lookups.Delete);
     }
 
     private async Task<IResult> GetAll(

@@ -6,6 +6,12 @@ public static class Permissions
     /// </summary>
     /// <param name="module">The name of the module</param>
     /// <returns></returns>
+    
+    // Every permission claim uses this type.
+    public const string ClaimType = "permission";
+
+    // Policy names starting with this prefix get a policy generated on demand.
+    public const string Prefix = "Permissions.";
     public static List<string> GeneratePermissionsForModule(string module)
     {
         return new List<string>
