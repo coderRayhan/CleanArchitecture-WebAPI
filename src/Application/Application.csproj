@@ -25,5 +25,11 @@
     <Folder Include="Common\Abstractions\Dapper\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
+      <HintPath>..\..\..\..\.dotnet\packs\Microsoft.AspNetCore.App.Ref\10.0.9\ref\net10.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 
 </Project>

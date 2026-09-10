@@ -19,6 +19,7 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Lookup> Lookups => Set<Lookup>();
 
     public DbSet<LookupDetails> LookupDetails => Set<LookupDetails>();
+    public DbSet<IdempotencyKeyEntity> IdempotencyKeys => Set<IdempotencyKeyEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

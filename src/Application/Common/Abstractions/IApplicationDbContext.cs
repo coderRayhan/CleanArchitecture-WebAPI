@@ -9,5 +9,6 @@ public interface IApplicationDbContext
 	DbSet<LookupDetails> LookupDetails { get; }
 	#endregion
 
+	public DbSet<IdempotencyKeyEntity> IdempotencyKeys { get; }
 	Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
