@@ -15,10 +15,12 @@ public sealed record CreateLookupCommand(
     string Description,
     bool Status,
     Guid? ParentId = null)
-    : ICacheInvalidatorCommand<Guid>
+    : ICacheInvalidatorCommand<Guid>, IIdempotentCommand
 {
     [JsonIgnore]
     public string[] CacheKeys => [AppCacheKeys.Lookups];
+
+    public string IdempotencyKey { get; }
 }
 
 internal sealed class CreateLookupCommandHandler(

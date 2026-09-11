@@ -1,5 +1,6 @@
 ﻿using Application.Common.Abstractions;
 using Application.Common.Abstractions.Caching;
+using Application.Common.Abstractions.Idempotency;
 using Application.Common.Abstractions.Identity;
 using Ardalis.GuardClauses;
 using Domain.Constants;
@@ -11,6 +12,7 @@ using Infrastructure.Identity.OptionsSetup;
 using Infrastructure.Identity.Permissions;
 using Infrastructure.Identity.Services;
 using Infrastructure.Persistence;
+using Infrastructure.Persistence.Idempotency;
 using Infrastructure.Persistence.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -33,6 +35,8 @@ public static class DependencyInjection
         PersistenceServiceExtension.AddPersistenceService(services, configuration);
         CachingServiceExtension.AddCachingService(services, configuration);
         IdentityServiceExtension.AddIdentityService(services, configuration);
+
+        services.AddScoped<IIdempotencyStore, SqlServerIdempotencyStore>();
         return services;
     }
 

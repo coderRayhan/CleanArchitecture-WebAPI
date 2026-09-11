@@ -11,7 +11,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(CORS_POLICY, builder =>
     {
-        builder.WithOrigins("http://localhost:4200/")
+        builder.WithOrigins("http://localhost:4200")
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();
@@ -32,12 +32,6 @@ ServiceLocator.ServiceProvider = app.Services;
 if (app.Environment.IsDevelopment())
 {
     await app.IdentityInitialiseDatabaseAsync();
-
-    // app.UseSwaggerUi(options =>
-    // {
-    //     options.Path = "/api";
-    //     options.DocumentPath = "/api/specification.json";
-    // });
     
     // NSwag generates the OpenAPI document
     app.UseOpenApi(options =>
@@ -60,8 +54,8 @@ else
     app.UseHsts();
 }
 
-app.UseCors(CORS_POLICY);
 app.UseHttpsRedirection();
+app.UseCors(CORS_POLICY);
 app.UseStaticFiles();
 
 app.UseAuthentication();
