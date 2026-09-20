@@ -112,4 +112,15 @@ public static class Permissions
             public const string Delete = "Permissions.LookupDetails.Delete";
         }
     }
+
+    public static class SuperAdmin
+    {
+        public static class MenuSections
+        {
+            public const string View = "Permissions.MenuSections.View";
+            public const string Create = "Permissions.MenuSections.Create";
+            public const string Edit = "Permissions.MenuSections.Edit";
+            public const string Delete = "Permissions.MenuSections.Delete";
+        }
+    }
 }
