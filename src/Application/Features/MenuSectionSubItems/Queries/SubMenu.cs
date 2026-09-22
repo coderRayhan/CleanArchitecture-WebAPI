@@ -1,6 +1,6 @@
 namespace Application.Features.MenuSectionSubItems.Queries;
 
-public class SubMenu
+public class SubMenuTwo
 {
     public Guid MenuSectionItemId { get; set; }
     public string MenuValue { get; set; }
@@ -11,17 +11,30 @@ public class SubMenu
     public bool ShowSubRoute { get; set; }
 }
 
-public class SideBarMenu
+public class SubMenu
 {
     public Guid Id { get; set; }
     public Guid MenuSectionId { get; set; }
+    public string MenuValue { get; set; }
+    public string Route { get; set; }
+    public string Base { get; set; }
+    public bool Dot { get; set; }
+    public bool HasSubRoute { get; set; }
+    public bool ShowSubRoute { get; set; }
+    public bool CustomSubmenuTwo { get; set; }
+    public List<SubMenuTwo> SubMenusTwo { get; set; }
+}
+
+public class SideBarMenu
+{
+    public Guid Id { get; set; }
     public string MenuValue { get; set; }
     public string Route { get; set; }
     public string Icon { get; set; }
     public string Base { get; set; }
     public bool HasSubRoute { get; set; }
     public bool ShowSubRoute { get; set; }
-    public bool CustomSubMenuTwo { get; set; }
+    public bool CustomSubmenuTwo { get; set; }
     public List<SubMenu> SubMenus { get; set; }
 }
 

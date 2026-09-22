@@ -18,28 +18,29 @@ internal sealed class GetMenuItemQueryHandler(
         var sql = $"""
                    SELECT
                     ms.Id,
-                    ms.Title Tittle,
+                    ms.Title MenuValue,
                     ms.Href Route,
                     ms.Icon,
                     REPLACE(ms.Href, '/', '') Base,
                     ms.HasSubRoute,
                     ms.HasSubRoute HasSubRouteTwo,
+                    ms.HasSubRoute CustomSubmenuTwo,
                     0 ShowSubRoute,
                     1 Dot,
                     'start' Materialicons
                    FROM MenuSections ms 
-
+                   
                    SELECT
                     a.Id,
                     a.MenuSectionId,
                     a.Title MenuValue,
                     a.Href Route,
-                    REPLACE(a.Href, '/', '') Base,
+                    null Base,
                     1 HasSubRoute,
                     0 ShowSubRoute,
                     1 CustomSubmenuTwo
                    FROM MenuSectionItems a
-
+                   
                    SELECT
                     a.Id,
                     a.MenuSectionItemId,
@@ -52,34 +53,48 @@ internal sealed class GetMenuItemQueryHandler(
                    """;
         using var result = await connection.QueryMultipleAsync(sql);
 
-        var sideBars = (await result.ReadAsync<SideBar>()).ToList();
         var sideBarMenus = (await result.ReadAsync<SideBarMenu>()).ToList();
         var subMenus = (await result.ReadAsync<SubMenu>()).ToList();
+        var subMenusTwo = (await result.ReadAsync<SubMenuTwo>()).ToList();
 
-        // Group sub-menus under their parent menu item
-        var subMenusByParent = subMenus
+        // Level 3: SubMenuTwo grouped by its exact parent SubMenu.Id
+        var subMenusTwoBySubMenuId = subMenusTwo
             .GroupBy(s => s.MenuSectionItemId)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        foreach (var subMenu in subMenus)
+        {
+            subMenu.SubMenusTwo = subMenusTwoBySubMenuId.TryGetValue(subMenu.Id, out var subsTwo)
+                ? subsTwo
+                : [];
+        }
+
+        // Level 2: SubMenu grouped under its parent SideBarMenu.Id
+        var subMenusByMenuId = subMenus
+            .GroupBy(s => s.MenuSectionId)
             .ToDictionary(g => g.Key, g => g.ToList());
 
         foreach (var menu in sideBarMenus)
         {
-            menu.SubMenus = subMenusByParent.TryGetValue(menu.Id, out var subs)
+            menu.SubMenus = subMenusByMenuId.TryGetValue(menu.Id, out var subs)
                 ? subs
                 : [];
         }
 
-        // Group menu items under their parent section
-        var menusByParent = sideBarMenus
-            .GroupBy(m => m.MenuSectionId)
-            .ToDictionary(g => g.Key, g => g.ToList());
-
-        foreach (var sideBar in sideBars)
+        // Level 1: single SideBar root, all SideBarMenu rows bound directly
+        var sideBarList = new List<SideBar>()
         {
-            sideBar.Menu = menusByParent.TryGetValue(sideBar.Id, out var menus)
-                ? menus
-                : [];
-        }
+            new SideBar()
+            {
+                Menu = sideBarMenus,
+                Tittle = "",
+                Icon = "airplay",
+                ShowAsTab = true,
+                SeparateRoute = false
+            }
+        };
 
-        return Result.Success(sideBars);
+
+        return Result.Success(sideBarList);
     }
 }
