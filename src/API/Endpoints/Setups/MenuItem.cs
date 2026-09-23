@@ -1,5 +1,6 @@
 using API.Extensions;
 using API.Infrastructure;
+using Application.Common.Security;
 using Application.Features.MenuSectionSubItems.Queries;
 using MediatR;
 
@@ -14,8 +15,8 @@ public sealed class MenuItem : EndpointGroupBase
         group.MapGet("GetMenuItem", GetMenuItem)
             .WithName("GetMenuItem")
             .Produces<List<SideBar>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest);
-        // .RequireAuthorization(Permissions.CommonSetup.Lookups.View);
+            .Produces(StatusCodes.Status400BadRequest)
+        .RequireAuthorization(Permissions.SuperAdmin.MenuItems.View);
         
     }
     

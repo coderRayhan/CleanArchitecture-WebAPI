@@ -122,5 +122,10 @@ public static class Permissions
             public const string Edit = "Permissions.MenuSections.Edit";
             public const string Delete = "Permissions.MenuSections.Delete";
         }
+        
+        public static class MenuItems
+        {
+            public const string View = "Permissions.MenuItems.View";
+        }
     }
 }
