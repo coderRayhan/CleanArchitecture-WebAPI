@@ -64,7 +64,7 @@
       "templateDirectory": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../../../angular_client/src/app/main/module/generated-clients/api-service.ts",
+      "output": "../../../angular_client/src/app/main/generated-clients/api-service.ts",
       "newLineBehavior": "Auto"
     }
   }

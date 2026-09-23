@@ -22,7 +22,7 @@ internal sealed class GetMenuItemQueryHandler(
                     ms.Href Route,
                     ms.Icon,
                     REPLACE(ms.Href, '/', '') Base,
-                    ms.HasSubRoute,
+                    null HasSubRoute,
                     ms.HasSubRoute HasSubRouteTwo,
                     ms.HasSubRoute CustomSubmenuTwo,
                     0 ShowSubRoute,

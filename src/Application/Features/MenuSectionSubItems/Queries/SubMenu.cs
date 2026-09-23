@@ -32,9 +32,10 @@ public class SideBarMenu
     public string Route { get; set; }
     public string Icon { get; set; }
     public string Base { get; set; }
-    public bool HasSubRoute { get; set; }
+    public bool? HasSubRoute { get; set; }
+    public bool HasSubRouteTwo { get; set; }
     public bool ShowSubRoute { get; set; }
-    public bool CustomSubmenuTwo { get; set; }
+    // public bool CustomSubmenuTwo { get; set; }
     public List<SubMenu> SubMenus { get; set; }
 }
 
@@ -50,6 +51,7 @@ public class SideBar
     public bool HasSubRouteTwo { get; set; }
     public bool ShowAsTab { get; set; }
     public bool SeparateRoute { get; set; }
+    public bool Dot { get; set; }
     public List<SideBarMenu> Menu { get; set; }
 }
 
