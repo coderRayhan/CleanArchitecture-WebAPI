@@ -16,7 +16,7 @@ public sealed class MenuItem : EndpointGroupBase
             .WithName("GetMenuItem")
             .Produces<List<SideBar>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-        .RequireAuthorization(Permissions.SuperAdmin.MenuItems.View);
+        .RequireAuthorization(Permissions.Admin.MenuItems.View);
         
     }
     

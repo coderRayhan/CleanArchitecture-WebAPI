@@ -92,6 +92,19 @@ public static class Permissions
             public const string Edit = "Permissions.ManageRoleClaims.Edit";
             public const string Delete = "Permissions.ManageRoleClaims.Delete";
         }
+        
+        public static class MenuSections
+        {
+            public const string View = "Permissions.MenuSections.View";
+            public const string Create = "Permissions.MenuSections.Create";
+            public const string Edit = "Permissions.MenuSections.Edit";
+            public const string Delete = "Permissions.MenuSections.Delete";
+        }
+        
+        public static class MenuItems
+        {
+            public const string View = "Permissions.MenuItems.View";
+        }
     }
 
     public static class CommonSetup
@@ -112,20 +125,5 @@ public static class Permissions
             public const string Delete = "Permissions.LookupDetails.Delete";
         }
     }
-
-    public static class SuperAdmin
-    {
-        public static class MenuSections
-        {
-            public const string View = "Permissions.MenuSections.View";
-            public const string Create = "Permissions.MenuSections.Create";
-            public const string Edit = "Permissions.MenuSections.Edit";
-            public const string Delete = "Permissions.MenuSections.Delete";
-        }
-        
-        public static class MenuItems
-        {
-            public const string View = "Permissions.MenuItems.View";
-        }
-    }
+    
 }
