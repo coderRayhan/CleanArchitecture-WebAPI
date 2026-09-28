@@ -68,7 +68,7 @@ public class Auth : EndpointGroupBase
         }
 
         var accessToken = authorizationHeader.ToString()
-            .Replace("Bearer", "");
+            .Replace("Bearer ", "");
 
         var result = await sender.Send(new RefreshTokenRequestCommand(accessToken, refreshToken));
 

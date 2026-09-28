@@ -162,7 +162,7 @@ internal sealed class AuthService(
 
             return principle;
         }
-        catch
+        catch(Exception e)
         {
             return Result.Failure<ClaimsPrincipal>(Error.Validation("Token", ErrorMessages.INVALID_TOKEN));
         }

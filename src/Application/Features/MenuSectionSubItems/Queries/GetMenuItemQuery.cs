@@ -22,13 +22,14 @@ internal sealed class GetMenuItemQueryHandler(
                     ms.Href Route,
                     ms.Icon,
                     REPLACE(ms.Href, '/', '') Base,
-                    null HasSubRoute,
+                    ms.HasSubRoute HasSubRoute,
                     ms.HasSubRoute HasSubRouteTwo,
                     ms.HasSubRoute CustomSubmenuTwo,
                     0 ShowSubRoute,
                     1 Dot,
                     'start' Materialicons
                    FROM MenuSections ms 
+                   Order By ms.SerialNo
                    
                    SELECT
                     a.Id,
@@ -40,6 +41,7 @@ internal sealed class GetMenuItemQueryHandler(
                     0 ShowSubRoute,
                     1 CustomSubmenuTwo
                    FROM MenuSectionItems a
+                   Order By a.SerialNo
                    
                    SELECT
                     a.Id,
@@ -50,6 +52,7 @@ internal sealed class GetMenuItemQueryHandler(
                     0 HasSubRoute,
                     0 ShowSubRoute
                    FROM MenuSectionSubItems a
+                   Order By a.SerialNo
                    """;
         using var result = await connection.QueryMultipleAsync(sql);
 
