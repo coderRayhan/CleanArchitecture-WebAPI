@@ -81,7 +81,7 @@ public sealed class MenuSections : EndpointGroupBase
         CancellationToken ct = default)
     {
         var result = await sender.Send(query, ct);
-        return TypedResults.Ok(result);
+        return TypedResults.Ok(result.Value);
     }
 
     private async Task<IResult> Get(ISender sender, Guid id)
