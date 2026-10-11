@@ -1,4 +1,5 @@
 ﻿using Domain.Shared;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Extensions;
 
@@ -18,6 +19,15 @@ public static class ResultExtensions
                 {"errors", result.Error }
             });
     }
+    
+    public static RouteHandlerBuilder WithProblemResponses(this RouteHandlerBuilder builder) =>
+        builder
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .Produces<ProblemDetails>(StatusCodes.Status401Unauthorized)
+            .Produces<ProblemDetails>(StatusCodes.Status403Forbidden)
+            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces<ProblemDetails>(StatusCodes.Status409Conflict)
+            .Produces<ProblemDetails>(StatusCodes.Status500InternalServerError);
 
     private static int GetStatusCode(ErrorType errorType) =>
         errorType switch

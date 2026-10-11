@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using API.Extensions;
+using Application.Common.DapperQueries;
 using Application.Common.Models;
 using Application.Common.Security;
 using Application.Features.MenuSections.Commands;
@@ -25,20 +26,18 @@ public sealed class MenuSections : EndpointGroupBase
         group.MapPut("Update", Update)
             .WithName("UpdateMenuSection")
             .Produces(StatusCodes.Status200OK)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound)
+            .WithProblemResponses()
             .RequireAuthorization(Permissions.Admin.MenuSections.Edit);
 
         group.MapDelete("Delete", Delete)
             .WithName("DeleteMenuSection")
             .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .WithProblemResponses()
         .RequireAuthorization(Permissions.Admin.MenuSections.Delete);
 
         group.MapPost("GetAll", GetAll)
             .WithName("GetMenuSections")
-            .Produces<PaginatedList<MenuSectionResponse>>(StatusCodes.Status200OK)
+            .Produces<PaginatedResponse<MenuSectionResponse>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Admin.MenuSections.View);
 
         group.MapGet("GetMenuSection/{id:Guid}", Get)
@@ -52,9 +51,10 @@ public sealed class MenuSections : EndpointGroupBase
     {
         var result = await sender.Send(command);
 
-        return result.Match(
+        var res = result.Match(
             onSuccess: () => Results.CreatedAtRoute("GetMenuSection", new { id = result.Value }),
             onFailure: result.ToProblemDetails);
+        return res;
     }
 
     private async Task<IResult> Update(ISender sender, [FromBody] UpdateMenuSectionCommand command)

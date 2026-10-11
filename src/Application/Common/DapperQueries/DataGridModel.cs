@@ -7,7 +7,7 @@ public abstract record DataGridModel : IDataGrid
     public bool IsInitialLoaded { get; set; } = false;
     
     // Pagination
-    public int PageNumber { get; } = 1;
+    public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;
     public int Offset { get; set; } = 0;
     

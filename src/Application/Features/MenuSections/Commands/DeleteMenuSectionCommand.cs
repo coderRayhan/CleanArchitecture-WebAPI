@@ -10,7 +10,7 @@ namespace Application.Features.MenuSections.Commands;
 public sealed record DeleteMenuSectionCommand(Guid Id)
     : ICacheInvalidatorCommand
 {
-    public string[] CacheKeys => [AppCacheKeys.Lookups];
+    public string[] CacheKeys => [AppCacheKeys.MenuSections];
 }
 
 internal sealed class DeleteMenuSectionCommandHandler(
