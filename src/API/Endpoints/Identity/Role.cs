@@ -1,7 +1,10 @@
 using API.Extensions;
 using API.Infrastructure;
+using Application.Common.DapperQueries;
 using Application.Common.Security;
 using Application.Features.Identity.Roles.Commands;
+using Application.Features.Identity.Roles.Models;
+using Application.Features.Identity.Roles.Queries;
 using Domain.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,25 +17,41 @@ public class Role : EndpointGroupBase
     public override void Map(WebApplication app)
     {
         var group = app.MapGroup(this);
+        
+        group.MapPost("GetAll", GetAll)
+            .WithName("GetRoles")
+            .Produces<PaginatedResponse<RoleModel>>(StatusCodes.Status200OK)
+            .RequireAuthorization(Permissions.Admin.IdentityRoles.View);
 
         group.MapPost("Create", Create)
             .WithName("CreateRole")
             .Produces<string>(StatusCodes.Status201Created)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .WithProblemResponses()
             .RequireAuthorization(Permissions.Admin.IdentityRoles.Create);
         
-        group.MapPut("Update", Create)
+        group.MapPut("Update", Update)
             .WithName("UpdateRole")
             .Produces(StatusCodes.Status200OK)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound)
+            .WithProblemResponses()
             .RequireAuthorization(Permissions.Admin.IdentityRoles.Edit);
+        
+        group.MapPut("Delete/{id}", Delete)
+            .WithName("DeleteRole")
+            .Produces(StatusCodes.Status204NoContent)
+            .WithProblemResponses()
+            .RequireAuthorization(Permissions.Admin.IdentityRoles.Delete);
 
         group.MapPut("AddOrRemovePermissions", AddOrRemovePermissions)
             .WithName("AddOrRemovePermissions")
             .Produces(StatusCodes.Status204NoContent)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .RequireAuthorization(Permissions.Admin.IdentityRoles.Create);
+    }
+    
+    private async Task<IResult> GetAll(ISender sender, [FromBody] GetRoleListQuery query)
+    {
+        var result = await sender.Send(query);
+        return TypedResults.Ok(result.Value);
     }
 
     private async Task<IResult> Create(
@@ -54,6 +73,14 @@ public class Role : EndpointGroupBase
 
         return result.Match(
             onSuccess: () => Results.Ok(),
+            onFailure: result.ToProblemDetails);
+    }
+    
+    public async Task<IResult> Delete(ISender sender, [FromRoute] string id)
+    {
+        var result = await sender.Send(new DeleteRoleCommand(id));
+        return result.Match(
+            onSuccess: () => Results.NoContent(),
             onFailure: result.ToProblemDetails);
     }
 

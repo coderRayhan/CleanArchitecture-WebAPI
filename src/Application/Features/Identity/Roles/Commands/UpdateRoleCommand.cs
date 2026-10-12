@@ -5,7 +5,7 @@ using Domain.Shared;
 
 namespace Application.Features.Identity.Roles.Commands;
 
-public sealed record UpdateRoleCommand(Guid Id, string roleName)
+public sealed record UpdateRoleCommand(string Id, string roleName)
 : ICacheInvalidatorCommand
 {
     public string[] CacheKeys => [AppCacheKeys.Roles];
@@ -17,7 +17,7 @@ internal sealed class UpdateRoleCommandHandler(
 {
     public async Task<Result> Handle(UpdateRoleCommand request, CancellationToken cancellationToken)
     {
-        var role = await roleService.GetRoleAsync(request.Id.ToString(),  cancellationToken);
+        var role = await roleService.GetRoleAsync(request.Id,  cancellationToken);
 
         if (role == null) return Result.Failure(Error.NotFound(nameof(role), "Role not found"));
         
