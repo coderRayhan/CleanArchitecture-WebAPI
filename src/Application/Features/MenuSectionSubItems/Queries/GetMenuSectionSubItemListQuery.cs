@@ -14,7 +14,9 @@ internal sealed class GetMenuSectionSubItemListQueryHandler(
     ISqlConnectionFactory sqlConnection)
     : IQueryHandler<GetMenuSectionSubItemListQuery, PaginatedResponse<MenuSectionSubItemResponse>>
 {
-    public async Task<Result<PaginatedResponse<MenuSectionSubItemResponse>>> Handle(GetMenuSectionSubItemListQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedResponse<MenuSectionSubItemResponse>>> Handle(
+        GetMenuSectionSubItemListQuery request, 
+        CancellationToken cancellationToken)
     {
         var connection = sqlConnection.GetOpenConnection();
         var sql = $"""

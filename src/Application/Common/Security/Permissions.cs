@@ -108,6 +108,14 @@ public static class Permissions
             public const string Delete = "Permissions.MenuSectionItems.Delete";
         }
         
+        public static class MenuSectionSubItems
+        {
+            public const string View = "Permissions.MenuSectionSubItems.View";
+            public const string Create = "Permissions.MenuSectionSubItems.Create";
+            public const string Edit = "Permissions.MenuSectionSubItems.Edit";
+            public const string Delete = "Permissions.MenuSectionSubItems.Delete";
+        }
+        
         public static class MenuItems
         {
             public const string View = "Permissions.MenuItems.View";

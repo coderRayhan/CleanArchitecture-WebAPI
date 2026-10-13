@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using API.Extensions;
+using Application.Common.Security;
 using Application.Features.MenuSectionSubItems.Commands;
 using Domain.Shared;
 
@@ -16,22 +17,20 @@ public sealed class MenuSectionSubItems : EndpointGroupBase
         group.MapPost("Create", Create)
             .WithName("CreateMenuSectionSubItem")
             .Produces<Guid>(StatusCodes.Status201Created)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest);
-            // .RequireAuthorization(Permissions.SuperAdmin.MenuSections.Create);
+            .WithProblemResponses()
+            .RequireAuthorization(Permissions.Admin.MenuSectionSubItems.Create);
 
         group.MapPut("Update", Update)
             .WithName("UpdateMenuSectionSubItem")
             .Produces(StatusCodes.Status200OK)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound);
-            // .RequireAuthorization(Permissions.SuperAdmin.MenuSections.Edit);
+            .WithProblemResponses()
+            .RequireAuthorization(Permissions.Admin.MenuSectionSubItems.Edit);
 
         group.MapDelete("Delete", Delete)
             .WithName("DeleteMenuSectionSubItem")
             .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest);
-        // .RequireAuthorization(Permissions.SuperAdmin.MenuSections.Delete);
+            .WithProblemResponses()
+            .RequireAuthorization(Permissions.Admin.MenuSectionSubItems.Delete);
     }
 
     private async Task<IResult> Create(ISender sender, [FromBody] CreateMenuSectionSubItemCommand command)

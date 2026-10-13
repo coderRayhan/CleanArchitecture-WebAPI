@@ -2,6 +2,7 @@
 
 public sealed class MenuSectionSubItemResponse
 {
+    public Guid Id { get; set; }
     public Guid MenuSectionItemId { get; set; }
     public string MenuSectionItemTitle { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;

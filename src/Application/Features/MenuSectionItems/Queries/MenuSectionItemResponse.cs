@@ -2,6 +2,7 @@
 
 public class MenuSectionItemResponse
 {
+    public Guid Id { get; set; }
     public Guid MenuSectionId { get; set; }
     public string MenuSectionTitle { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
