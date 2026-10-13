@@ -1,6 +1,6 @@
 ﻿namespace Application.Features.MenuSectionSubItems.Queries;
 
-public sealed record MenuSectionSubItemResponse
+public sealed class MenuSectionSubItemResponse
 {
     public Guid MenuSectionItemId { get; set; }
     public string MenuSectionItemTitle { get; set; } = string.Empty;

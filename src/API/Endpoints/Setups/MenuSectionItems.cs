@@ -22,8 +22,8 @@ public sealed class MenuSectionItems : EndpointGroupBase
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
             .RequireAuthorization(Permissions.Admin.MenuSectionItems.View);
 
-        group.MapGet("GetMenuSection/{id:Guid}", Get)
-            .WithName("GetMenuSection")
+        group.MapGet("GetMenuSectionItem/{id:Guid}", Get)
+            .WithName("GetMenuSectionItem")
             .Produces<MenuSectionItemResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .RequireAuthorization(Permissions.Admin.MenuSectionItems.View);

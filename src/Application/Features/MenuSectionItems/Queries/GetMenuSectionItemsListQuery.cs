@@ -22,6 +22,7 @@ namespace Application.Features.MenuSectionItems.Queries
             var connection = sqlConnection.GetOpenConnection();
             var sql = $"""
                     SELECT
+                        MSI.Id,
                    	    MSI.MenuSectionId,
                     	MS.Title {nameof(MenuSectionItemResponse.MenuSectionTitle)},
                    	    MSI.Title,
