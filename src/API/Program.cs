@@ -68,6 +68,8 @@ app.UseExceptionHandler(options => { });
 //need to check
 app.Map("/", () => Results.Redirect("/scalar"));
 
+app.MapGet("/guid", () => Guid.NewGuid());
+
 app.MapEndpoints();
 
 app.Run();
