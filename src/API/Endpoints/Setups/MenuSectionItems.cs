@@ -1,9 +1,12 @@
-﻿using API.Infrastructure;
+﻿using API.Extensions;
+using API.Infrastructure;
+using Application.Common.DapperQueries;
+using Application.Common.Security;
+using Application.Features.MenuSectionItems.Commands;
+using Application.Features.MenuSectionItems.Queries;
+using Domain.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using API.Extensions;
-using Application.Features.MenuSectionItems.Commands;
-using Domain.Shared;
 
 namespace API.Endpoints.Setups;
 
@@ -13,25 +16,51 @@ public sealed class MenuSectionItems : EndpointGroupBase
     {
         var group = app.MapGroup(this);
 
+        group.MapPost("GetAll", GetAll)
+            .WithName("GetMenuSectionItems")
+            .Produces<PaginatedResponse<MenuSectionItemResponse>>(StatusCodes.Status200OK)
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .RequireAuthorization(Permissions.Admin.MenuSectionItems.View);
+
+        group.MapGet("GetMenuSection/{id:Guid}", Get)
+            .WithName("GetMenuSection")
+            .Produces<MenuSectionItemResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .RequireAuthorization(Permissions.Admin.MenuSectionItems.View);
+
         group.MapPost("Create", Create)
             .WithName("CreateMenuSectionItem")
             .Produces<Guid>(StatusCodes.Status201Created)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest);
-            // .RequireAuthorization(Permissions.SuperAdmin.MenuSections.Create);
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .RequireAuthorization(Permissions.Admin.MenuSectionItems.Create);
 
         group.MapPut("Update", Update)
             .WithName("UpdateMenuSectionItem")
             .Produces(StatusCodes.Status200OK)
             .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound);
-            // .RequireAuthorization(Permissions.SuperAdmin.MenuSections.Edit);
+            .Produces(StatusCodes.Status404NotFound)
+            .RequireAuthorization(Permissions.Admin.MenuSectionItems.Edit);
 
         group.MapDelete("Delete", Delete)
             .WithName("DeleteMenuSectionItem")
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest);
-        // .RequireAuthorization(Permissions.SuperAdmin.MenuSections.Delete);
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
+            .RequireAuthorization(Permissions.Admin.MenuSectionItems.Delete);
+    }
+
+    private async Task<IResult> GetAll(ISender sender, 
+        [FromBody] GetMenuSectionItemsListQuery query,
+        CancellationToken ct = default)
+    {
+        var result = await sender.Send(query, ct);
+        return TypedResults.Ok(result.Value);
+    }
+
+    private async Task<IResult> Get(ISender sender, Guid id, CancellationToken ct = default)
+    {
+        var result = await sender.Send(new GetMenuSectionItemByIdQuery(id), ct);
+        return TypedResults.Ok(result.Value);
     }
 
     private async Task<IResult> Create(ISender sender, [FromBody] CreateMenuSectionItemCommand command)
