@@ -26,7 +26,8 @@ internal sealed class GetMenuSectionSubItemListQueryHandler(
                    	    MSI.Title ${nameof(MenuSectionSubItemResponse.MenuSectionItemTitle)},
                    	    MSSI.Title,
                    	    MSSI.Href,
-                   	    MSSI.SerialNo
+                   	    MSSI.SerialNo,
+                   	    MSSI.IsActive
                    FROM MenuSectionSubItems MSSI
                    INNER JOIN MenuSectionItems MSI ON MSSI.MenuSectionItemId = MSI.Id
                    """;

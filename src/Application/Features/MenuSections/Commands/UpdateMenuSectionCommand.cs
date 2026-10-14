@@ -14,7 +14,8 @@ namespace Application.Features.MenuSections.Commands
         int SerialNo,
         string Href,
         string Icon,
-        bool HasSubRoute)
+        bool HasSubRoute,
+        bool IsActive = true)
         : ICacheInvalidatorCommand
     {
         public string[] CacheKeys => [AppCacheKeys.MenuSections];

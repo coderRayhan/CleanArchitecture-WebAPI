@@ -11,4 +11,5 @@ public class MenuSectionItemResponse
     public string? Roles { get; set; }
     public bool IsParent { get; set; }
     public int SerialNo { get; set; }
+    public bool IsActive { get; set; }
 }

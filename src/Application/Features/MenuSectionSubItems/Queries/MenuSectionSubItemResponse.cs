@@ -10,4 +10,5 @@ public sealed class MenuSectionSubItemResponse
     public string? Roles { get; set; }
     public string? Target { get; set; }
     public int SerialNo { get; set; }
+    public bool IsActive { get; set; }
 }

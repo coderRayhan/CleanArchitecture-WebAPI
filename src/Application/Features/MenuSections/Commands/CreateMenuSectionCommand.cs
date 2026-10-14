@@ -13,7 +13,8 @@ public sealed record CreateMenuSectionCommand(
     int SerialNo,
     string Href,
     string Icon,
-    bool HasSubRoute)
+    bool HasSubRoute,
+    bool IsActive = true)
 : ICacheInvalidatorCommand<Guid>
 {
     [JsonIgnore]

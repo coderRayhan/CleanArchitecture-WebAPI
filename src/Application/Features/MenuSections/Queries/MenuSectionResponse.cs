@@ -8,4 +8,5 @@ public class MenuSectionResponse
     public string Href { get; set; } = string.Empty;
     public string Icon { get; set; } = string.Empty;
     public bool HasSubRoute { get; set; }
+    public bool IsActive { get; set; }
 }

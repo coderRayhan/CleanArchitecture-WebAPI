@@ -12,7 +12,8 @@ public sealed record CreateMenuSectionSubItemCommand(
     Guid MenuSectionItemId,
     string Title,
     string Href,
-    int SerialNo)
+    int SerialNo,
+    bool IsActive = true)
 : ICacheInvalidatorCommand<Guid>
 {
     [JsonIgnore]

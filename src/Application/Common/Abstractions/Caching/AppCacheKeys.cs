@@ -6,5 +6,6 @@ public static class AppCacheKeys
 
     public const string LookupDetails = nameof(LookupDetails);
     public const string MenuSections = nameof(MenuSections);
+    public const string MenuSectionsDropdown = "MenuSections:Dropdown";
     public const string MenuSectionItems = nameof(MenuSectionItems);
 }

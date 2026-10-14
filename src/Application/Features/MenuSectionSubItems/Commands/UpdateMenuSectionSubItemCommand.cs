@@ -12,7 +12,8 @@ namespace Application.Features.MenuSectionSubItems.Commands
         Guid MenuSectionItemId,
         string Title,
         string Href,
-        int SerialNo)
+        int SerialNo,
+        bool IsActive = true)
         : ICacheInvalidatorCommand
     {
         public string[] CacheKeys => [AppCacheKeys.MenuSections];

@@ -29,7 +29,8 @@ namespace Application.Features.MenuSectionItems.Queries
                    	    MSI.Href,
                    	    MSI.IsParent,
                    	    MSI.SerialNo,
-                   	    MSI.IsDeleted
+                   	    MSI.IsDeleted,
+                   	    MSI.IsActive
                    FROM MenuSectionItems MSI
                    INNER JOIN MenuSections MS ON MSI.MenuSectionId = MS.Id
                    """;
