@@ -1,4 +1,4 @@
-﻿using Application.Features.AppUsers.Commands;
+﻿using Application.Features.Identity.AppUsers.Commands;
 using Domain.Shared;
 
 namespace Application.Common.Abstractions.Identity;

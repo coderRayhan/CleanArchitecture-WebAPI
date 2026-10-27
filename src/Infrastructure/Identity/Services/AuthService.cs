@@ -28,6 +28,9 @@ internal sealed class AuthService(
         if (user is null)
             return Result.Failure<AuthenticatedResponse>(Error.NotFound(nameof(user), ErrorMessages.USER_NOT_FOUND));
 
+        if (user is { IsActive: false })
+            return Result.Failure<AuthenticatedResponse>(Error.Validation(nameof(user), ErrorMessages.USER_INACTIVE));
+
         var result = await userManager.CheckPasswordAsync(user, password);
 
         if(!result)

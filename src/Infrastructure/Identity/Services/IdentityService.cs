@@ -1,6 +1,6 @@
 ﻿using Application.Common.Abstractions.Identity;
 using Application.Common.Constants;
-using Application.Features.AppUsers.Commands;
+using Application.Features.Identity.AppUsers.Commands;
 using Domain.Shared;
 using Infrastructure.Identity.Model;
 using Microsoft.AspNetCore.Authorization;

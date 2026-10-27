@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Features.AppUsers.Commands;
-public record CreateUserCommand(
+namespace Application.Features.Identity.AppUsers.Commands;
+public sealed record UpdateUserCommand(
+    string Id,
     string UserName,
-    string Password,
     string Email,
     string FirstName,
     string LastName,

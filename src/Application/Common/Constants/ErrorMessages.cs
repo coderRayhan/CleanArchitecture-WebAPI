@@ -19,6 +19,7 @@ public static class ErrorMessages
     public const string UNABLE_CREATE_ROLE = "Unable to create the role";
     public const string UNABLE_UPDATE_ROLE = "Unable to update the role";
     public const string UNABLE_UPDATE_PERMISSION = "Unable to update the permission";
+    public const string USER_INACTIVE = "User is inactive";
 
     public const string TOKEN_DID_NOT_MATCH = "Token did not match any users.";
     public const string TOKEN_NOT_ACTIVE = "Token Not Active.";

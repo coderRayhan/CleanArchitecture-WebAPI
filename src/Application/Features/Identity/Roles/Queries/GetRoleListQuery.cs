@@ -10,7 +10,7 @@ namespace Application.Features.Identity.Roles.Queries;
 
 public sealed record GetRoleListQuery : DataGridModel, ICacheableQuery<PaginatedResponse<RoleModel>>
 {
-    public string CacheKey => $"Roles:{Offset}:{PageSize}";
+    public string CacheKey => $"Roles:{PageNumber}:{PageSize}";
 }
 
 internal sealed class GetRoleListQueryHandler(ISqlConnectionFactory sqlConnection)

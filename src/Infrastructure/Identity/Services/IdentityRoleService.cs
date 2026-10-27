@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Features.Identity.Roles.Models;
 
 namespace Infrastructure.Identity.Services;
 internal class IdentityRoleService(
@@ -40,6 +41,22 @@ internal class IdentityRoleService(
         await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
+    }
+
+    public async Task<Result<RoleModel>> GetRolePermissionsAsync(string id, CancellationToken cancellationToken = default)
+    {
+        var role = await roleManager.FindByIdAsync(id);
+        if(role is null)
+            Result.Failure<RoleModel>(Error.Failure("Get role permissions failed", ErrorMessages.ROLE_NOT_FOUND));
+        
+        var permissions = await roleManager.GetClaimsAsync(role!);
+
+        return Result.Success(new RoleModel()
+        {
+            Id = role!.Id,
+            Name = role.Name,
+            Permissions = permissions.Select(x => x.Value).ToList()
+        });
     }
 
     public async Task<Result<string>> CreateRoleAsync(string name, CancellationToken cancellationToken)

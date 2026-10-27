@@ -41,6 +41,13 @@ public class Role : EndpointGroupBase
             .WithProblemResponses()
             .RequireAuthorization(Permissions.Admin.IdentityRoles.Delete);
 
+        group.MapGet("GetRolePermissions/{roleId}", GetRolePermissionsAsync)
+            .WithName("GetRolePermissions")
+            .Produces<RoleModel>(StatusCodes.Status200OK)
+            .Produces<ProblemDetails>(StatusCodes.Status404NotFound)
+            .Produces<ProblemDetails>(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization(Permissions.Admin.IdentityRoles.View);
+
         group.MapPut("AddOrRemovePermissions", AddOrRemovePermissions)
             .WithName("AddOrRemovePermissions")
             .Produces(StatusCodes.Status204NoContent)
@@ -81,6 +88,14 @@ public class Role : EndpointGroupBase
         var result = await sender.Send(new DeleteRoleCommand(id));
         return result.Match(
             onSuccess: () => Results.NoContent(),
+            onFailure: result.ToProblemDetails);
+    }
+
+    private async Task<IResult> GetRolePermissionsAsync(ISender sender, [FromRoute] string roleId)
+    {
+        var result = await sender.Send(new GetRolePermissionsQuery(roleId));
+        return result.Match(
+            onSuccess: () => Results.Ok(result.Value),
             onFailure: result.ToProblemDetails);
     }
 

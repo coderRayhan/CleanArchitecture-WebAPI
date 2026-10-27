@@ -1,4 +1,5 @@
-﻿using Domain.Shared;
+﻿using Application.Features.Identity.Roles.Models;
+using Domain.Shared;
 
 namespace Application.Common.Abstractions.Identity;
 public interface IIdentityRoleService
@@ -12,4 +13,5 @@ public interface IIdentityRoleService
     Task<Result> DeleteRoleAsync(string id, CancellationToken cancellationToken);
 
     Task<Result> AddorRemoveClaimsToRoleAsync(string id, List<string> permissions, CancellationToken cancellationToken);
+    Task<Result<RoleModel>> GetRolePermissionsAsync(string id, CancellationToken cancellationToken = default);
 }
